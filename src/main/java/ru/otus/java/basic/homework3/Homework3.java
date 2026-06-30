@@ -43,7 +43,6 @@ public class Homework3 {
                 }
             }
         }
-        //sum = Arrays.stream(arr).flatMapToInt(Arrays::stream).filter(i -> i > 0).sum();
         return sum;
     }
 
@@ -82,14 +81,13 @@ public class Homework3 {
         return max;
     }
 
-    public static int secondStrSum(int [][] arr){
+    public static int secondStrSum(int[][] arr) {
         if (arr.length < 2) {
             return -1;
         }
         int sum = 0;
-        int numStr = 1;
-        for(int i = 0; i < arr[numStr].length; i ++) {
-           sum += arr[numStr][i];
+        for (int element: arr[1]) {
+            sum += element;
         }
         return sum;
     }
