@@ -31,7 +31,6 @@ public class Homework2Simple {
         for (int i = 0; i < count; i++) {
             System.out.println(str);
         }
-        // str.repeat(count);
     }
 
     public static void printSumOfElemGraterThanFive(int[] arr) {
@@ -42,14 +41,12 @@ public class Homework2Simple {
             }
         }
         System.out.println(sum);
-        //Arrays.stream(arr).filter(num -> num > 5).sum();
     }
 
     public static void fillArray(int num, int[] arr) {
         for (int i = 0; i < arr.length; i++) {
             arr[i] = num;
         }
-        //Arrays.fill(arr,num);
     }
 
     public static void increaseArrayNumbers(int num, int[] arr) {
@@ -72,8 +69,11 @@ public class Homework2Simple {
         if (sumLeft > sumRight) {
             System.out.printf("sumLeft (%d) > sumRight (%d)", sumLeft, sumRight);
         }
+        else if (sumLeft < sumRight){
+            System.out.printf("sumLeft (%d) < sumRight (%d)",  sumLeft, sumRight);
+        }
         else {
-            System.out.printf("sumRight  (%d) > sumLeft (%d)",  sumRight, sumLeft);
+            System.out.printf("sumLeft (%d) = sumRight (%d)",  sumLeft, sumRight);
         }
     }
 }
