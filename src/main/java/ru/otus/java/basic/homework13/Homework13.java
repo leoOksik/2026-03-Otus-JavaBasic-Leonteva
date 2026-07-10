@@ -1,5 +1,8 @@
 package ru.otus.java.basic.homework13;
 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 public class Homework13 {
     public static void main(String[] args) throws InterruptedException {
 
@@ -22,51 +25,31 @@ public class Homework13 {
 
     public static void fillArrayWithThread() throws InterruptedException {
         double[] array = new double[100_000_000];
-
-        long start = System.nanoTime();
-
+        int countThread = 4;
+        Thread[] threads = new Thread[countThread];
         int length = array.length;
-        int oneLength = length / 4;
-        int secondLength = oneLength * 2;
-        int thirdLength = oneLength * 3;
-        int fourthLength = length;
+        int step = length / 4;
 
-        Thread oneThread = new Thread(() -> {
-            for (int i = 0; i < oneLength; i++) {
-                array[i] = 1.14 * Math.cos(i) * Math.sin(i * 0.2) * Math.cos(i / 1.2);
-            }
-        });
+        long startTime = System.nanoTime();
 
-        Thread secondThread = new Thread(() -> {
-            for (int i = oneLength; i < secondLength; i++) {
-                array[i] = 1.14 * Math.cos(i) * Math.sin(i * 0.2) * Math.cos(i / 1.2);
-            }
-        });
+        for (int i = 0; i < countThread; i++) {
+            int start = i * step;
+            int end = (i == countThread - 1) ? length : (i + 1) * step;
 
-        Thread thirdThread = new Thread(() -> {
-            for (int i = secondLength; i < thirdLength; i++) {
-                array[i] = 1.14 * Math.cos(i) * Math.sin(i * 0.2) * Math.cos(i / 1.2);
-            }
-        });
+            threads[i] = new Thread(() ->
+                    IntStream.range(start, end).forEach(j ->
+                            array[j] = 1.14 * Math.cos(j) * Math.sin(j * 0.2) * Math.cos(j / 1.2))
+            );
+        }
 
-        Thread fourthThread = new Thread(() -> {
-            for (int i = thirdLength; i < fourthLength; i++) {
-                array[i] = 1.14 * Math.cos(i) * Math.sin(i * 0.2) * Math.cos(i / 1.2);
-            }
-        });
+        Arrays.stream(threads).forEach(Thread::start);
 
-        oneThread.start();
-        secondThread.start();
-        thirdThread.start();
-        fourthThread.start();
+        for (Thread t : threads) {
+            t.join();
+        }
 
-        oneThread.join();
-        secondThread.join();
-        thirdThread.join();
-        fourthThread.join();
-
-        long end = System.nanoTime();
-        double seconds = (double) (end - start) / 1_000_000_000;
+        long endTime = System.nanoTime();
+        double seconds = (double) (endTime - startTime) / 1_000_000_000;
         System.out.printf("%nВремя выполнения c использованием потоков: %.2f сек", seconds);
     }
 }
