@@ -10,6 +10,9 @@ import java.util.regex.Pattern;
 
 public class ServerApp {
 
+    private static final String REGEX = "\\s*(-?\\d+)\\s*(-?\\d+)\\s*([+\\-*/])\\s*";
+    private static final Pattern PATTERN = Pattern.compile(REGEX);
+
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(8189)) {
             System.out.println("Server started in port: " + serverSocket.getLocalPort());
@@ -51,8 +54,7 @@ public class ServerApp {
     }
 
     public static int calculateExpression(String message) {
-        Pattern pattern = Pattern.compile("\\s*(-?\\d+)\\s*(-?\\d+)\\s*([+\\-*/])\\s*");
-        Matcher matcher = pattern.matcher(message);
+        Matcher matcher = PATTERN.matcher(message);
 
         if (matcher.matches()) {
             String num1 = matcher.group(1);
