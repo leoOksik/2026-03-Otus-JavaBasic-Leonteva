@@ -8,15 +8,7 @@ public class Dog extends Animal {
     }
 
     @Override
-    public double swim(int distance) {
-        if (distance * 2 > getEndurance()) {
-            setTired(true);
-            System.out.println("Недостаточно выносливости для заплыва");
-            return -1;
-        }
-        setEndurance(getEndurance() - distance * 2);
-        double time = distance / getSwimSpeed();
-        System.out.printf("%s проплыл за %.2f сек.%n", getName(), time);
-        return time;
+    protected int getEnduranceCoeff() {
+        return 2;
     }
 }

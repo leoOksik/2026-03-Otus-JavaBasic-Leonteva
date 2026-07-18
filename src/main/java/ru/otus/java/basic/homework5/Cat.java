@@ -2,8 +2,8 @@ package ru.otus.java.basic.homework5;
 
 public class Cat extends Animal {
 
-    public Cat(String name, double runSpeed, double swimSpeed, int endurance) {
-        super(name, runSpeed, swimSpeed, endurance);
+    public Cat(String name, double runSpeed, int endurance) {
+        super(name, runSpeed, 0.0, endurance);
     }
 
     @Override

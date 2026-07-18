@@ -32,7 +32,24 @@ public abstract class Animal {
         return time;
     }
 
-    abstract public double swim(int distance);
+    protected int getEnduranceCoeff() {
+        return 0;
+    }
+
+    public double swim(int distance) {
+
+        int enduranceCoeff = getEnduranceCoeff();
+
+        if (distance * enduranceCoeff > endurance) {
+            isTired = true;
+            System.out.println("Недостаточно выносливости для заплыва");
+            return -1;
+        }
+        endurance = endurance - distance * enduranceCoeff;
+        double time = distance / getSwimSpeed();
+        System.out.printf("%s проплыл за %.2f сек.%n", getName(), time);
+        return time;
+    }
 
     public void info() {
         System.out.printf("%s%nВыносливость: %d%nУсталость: %s%n",
@@ -43,19 +60,11 @@ public abstract class Animal {
         return swimSpeed;
     }
 
-    public int getEndurance() {
-        return endurance;
-    }
-
-    public void setEndurance(int endurance) {
-        this.endurance = endurance;
-    }
-
-    public void setTired(boolean tired) {
-        isTired = tired;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public int getEndurance() {
+        return endurance;
     }
 }

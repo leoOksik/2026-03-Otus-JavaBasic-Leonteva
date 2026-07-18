@@ -4,7 +4,7 @@ package ru.otus.java.basic.homework5;
 public class Homework5 {
     public static void main(String[] args) {
 
-        Animal cat = new Cat("Bars", 3, 2, 30);
+        Animal cat = new Cat("Bars", 3, 30);
         Animal dog = new Dog("Mars", 5, 3, 50);
         Animal horse = new Horse("Milli", 10, 5, 100);
 
