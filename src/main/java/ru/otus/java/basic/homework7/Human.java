@@ -28,21 +28,19 @@ public class Human {
         }
     }
 
-    public boolean move(TerrainType terrainType, double distance) {
+    public void move(TerrainType terrainType, double distance) {
         if (currentTransport == null) {
             System.out.printf("%s идет пешком дистанцию %.2f км по местности %s%n",
                     name, distance, terrainType.getValue());
-            return true;
+            return;
         }
 
         if (currentTransport.canMove(terrainType, distance)) {
             System.out.printf("%s переместился на дистанцию %.2f км на транспорте %s по местности %s%n",
                     name, distance, currentTransport.toString(), terrainType.getValue());
-            return true;
         } else {
             System.out.printf("%s не смог переместиться на дистанцию %.2f на транспорте %s по местности %s%n",
                     name, distance, currentTransport.toString(), terrainType.getValue());
-            return false;
         }
     }
 }
