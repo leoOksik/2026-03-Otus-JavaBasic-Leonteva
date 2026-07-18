@@ -1,18 +1,18 @@
 package ru.otus.java.basic.homework4.box;
 
+import java.util.Objects;
+
 public class Box {
 
     private final Dimension dimension;
     private String color;
     private boolean isOpened;
-    private boolean isFilled;
     private Item item;
 
     public Box(Dimension dimension, String color) {
-        this.dimension = dimension;
+        this.dimension = Objects.requireNonNull(dimension, "dimension must not be null");
         this.color = color;
         this.isOpened = false;
-        this.isFilled = false;
         this.item = null;
     }
 
@@ -32,9 +32,8 @@ public class Box {
     }
 
     public void pushItem(Item item) {
-        if (isOpened && !isFilled) {
+        if (isOpened && this.item == null) {
             this.item = item;
-            isFilled = true;
             System.out.printf("Предмет %s помещён в коробку%n", item.getName());
 
         } else if (!isOpened) {
@@ -46,9 +45,8 @@ public class Box {
     }
 
     public void popItem() {
-        if (isOpened && isFilled) {
+        if (isOpened && this.item != null) {
             this.item = null;
-            isFilled = false;
             System.out.println("Предмет убран. Коробка пуста");
 
         } else if (!isOpened) {
@@ -60,10 +58,10 @@ public class Box {
 
     public void print() {
         System.out.printf("""
-                        %s
-                        Color: %s
-                        %s
-                        %n""",
+                %s
+                Color: %s
+                %s
+                %n""",
                 dimension, color, item == null ? "Item: -" : item);
     }
 }
