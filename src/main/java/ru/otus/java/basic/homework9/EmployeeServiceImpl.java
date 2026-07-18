@@ -42,8 +42,8 @@ public class EmployeeServiceImpl implements EmployeeService {
             return false;
         }
 
-        if (minAverageAge <= 0.0) {
-            throw new IllegalArgumentException("Min average age cannot be negative or zero");
+        if (minAverageAge < 0.0) {
+            throw new IllegalArgumentException("Min average age cannot be negative");
         }
 
         double averageAge = employees.stream()

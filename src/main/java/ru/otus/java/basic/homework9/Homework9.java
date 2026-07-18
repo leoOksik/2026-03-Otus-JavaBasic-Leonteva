@@ -36,21 +36,13 @@ public class Homework9 {
 
 
         System.out.println("\nMethod 3 - List<Integer> rewriteNumbers(int num, List<Integer> list)");
-        List<Integer> list2 = new ArrayList<>() {
-            {
-                IntStream.range(0, 5).forEach(this::add);
-            }
-        };
+        List<Integer> list2 = new ArrayList<>(IntStream.range(0, 5).boxed().toList());
         System.out.printf("List before rewrite: %s%n", list2);
         System.out.printf("List after rewrite: %s%n", ListService.rewriteNumbers(7, list2));
 
 
         System.out.println("\nMethod 4 - List<Integer> increaseEl(int num, List<Integer> list)");
-        List<Integer> list3 = new ArrayList<>() {
-            {
-                IntStream.range(0, 7).forEach(this::add);
-            }
-        };
+        List<Integer> list3 = new ArrayList<>(IntStream.range(0, 7).boxed().toList());
         System.out.printf("List before increaseEl: %s%n", list3);
         System.out.printf("List after increaseEl: %s%n", ListService.increaseEl(3, list3));
 

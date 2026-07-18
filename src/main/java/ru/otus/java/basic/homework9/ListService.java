@@ -30,15 +30,15 @@ public final class ListService {
     }
 
     public static List<Integer> rewriteNumbers(int num, List<Integer> list) {
-        for (int el : list) {
-            list.set(el, num);
+        for (int i = 0; i < list.size(); i++) {
+            list.set(i, num);
         }
         return list;
     }
 
     public static List<Integer> increaseEl(int num, List<Integer> list) {
-        for (int el : list) {
-            list.set(el, el + num);
+        for (int i = 0; i < list.size(); i++) {
+            list.set(i, list.get(i) + num);
         }
         return list;
     }
