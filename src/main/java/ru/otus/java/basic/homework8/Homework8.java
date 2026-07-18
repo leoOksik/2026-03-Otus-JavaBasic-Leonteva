@@ -1,6 +1,5 @@
 package ru.otus.java.basic.homework8;
 
-
 import java.util.Arrays;
 
 public class Homework8 {
@@ -19,34 +18,43 @@ public class Homework8 {
         };
 
         String[][] correctSizeArrayWithCorrectData = new String[][]{
-                {"1", "2", "3", "4"},
+                {"2", "2", "3", "4"},
                 {"5", "6", "7", "8"},
-                {"9", "0", "-5", "-10"},
+                {"9", "2", "-5", "-10"},
                 {"-2", "0", "4", "2"}
         };
 
         try {
             System.out.printf("Сумма элементов = %d", sumElements(incorrectSizeArray));
-        } catch (AppArraySizeException | AppArrayDataException ex) {
-            System.out.println(ex.getMessage());
+        } catch (AppArraySizeException ex) {
+            System.err.println(ex.getMessage());
+        } catch (AppArrayDataException ex) {
+            System.err.printf("%s: [%d][%d]: %n",
+                    ex.getMessage(), ex.getRow(), ex.getCol());
         }
 
         try {
             System.out.printf("Сумма элементов = %d", sumElements(correctSizeArrayWithIncorrectData));
-        } catch (AppArraySizeException | AppArrayDataException ex) {
-            System.out.println(ex.getMessage());
+        } catch (AppArraySizeException ex) {
+            System.err.println(ex.getMessage());
+        } catch (AppArrayDataException ex) {
+            System.err.printf("%s: [%d][%d]: %n",
+                    ex.getMessage(), ex.getRow(), ex.getCol());
         }
 
         try {
             System.out.printf("Сумма элементов = %d", sumElements(correctSizeArrayWithCorrectData));
-        } catch (AppArraySizeException | AppArrayDataException ex) {
-            System.out.println(ex.getMessage());
+        } catch (AppArraySizeException ex) {
+            System.err.println(ex.getMessage());
+        } catch (AppArrayDataException ex) {
+            System.err.printf("%s: [%d][%d]: %n",
+                    ex.getMessage(), ex.getRow(), ex.getCol());
         }
-
     }
 
     public static int sumElements(String[][] arr) {
-        if (arr.length != 4 || Arrays.stream(arr).anyMatch(row -> row.length != 4)) {
+        if (arr == null || arr.length != 4 ||
+                Arrays.stream(arr).anyMatch(row -> row == null || row.length != 4)) {
             throw new AppArraySizeException("Incorrect size. Array size must be 4x4");
         }
 
@@ -58,7 +66,7 @@ public class Homework8 {
                 try {
                     sum += Integer.parseInt(s);
                 } catch (NumberFormatException ex) {
-                    throw new AppArrayDataException("Incorrect data. Indexes: " + i + ", " + j);
+                    throw new AppArrayDataException("Incorrect data", i, j);
                 }
             }
         }
