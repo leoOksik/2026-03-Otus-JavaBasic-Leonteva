@@ -1,0 +1,38 @@
+services:
+
+  test-postgres:
+    image: postgres:18
+    container_name: test-postgres
+    environment:
+      POSTGRES_USER: ${TEST_DB_USER:-test_user}
+      POSTGRES_PASSWORD: ${TEST_DB_PASSWORD:-test_pass}
+      POSTGRES_DB: ${TEST_DB_NAME:-test_db}
+    ports:
+      - "${TEST_DB_PORT:-5433}:5432"
+    volumes:
+      - test_pgdata:/var/lib/postgresql
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${TEST_DB_USER:-test_user} -d ${TEST_DB_NAME:-test_db}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:9.15
+    container_name: test-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@testing.ru}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+    ports:
+      - "${PGADMIN_PORT:-8091}:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      test-postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  test_pgdata:
+  pgadmin_data:
