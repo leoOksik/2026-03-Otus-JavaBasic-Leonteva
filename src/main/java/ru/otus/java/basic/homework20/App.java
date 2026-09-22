@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import java.util.Scanner;
 
 public class App {
@@ -25,9 +24,9 @@ public class App {
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             } catch (FileNotFoundException e) {
-                System.out.println("File not found " + e.getMessage());
+                System.out.println("File not found");
             } catch (IOException e) {
-                System.err.println("Error reading file " + e.getMessage());
+                System.out.println("Error reading file");
             }
         }
     }
@@ -61,14 +60,18 @@ public class App {
     }
 
     private static String[] checkInputAndSplit(String input) {
-        Objects.requireNonNull(input, "Input string should not be null");
+        if (input == null) {
+            throw new IllegalArgumentException("Input string should not be null");
+        }
+
         if (input.isBlank()) {
             throw new IllegalArgumentException("Input string should not be blank");
         }
-        String[] words = input.trim().split("\\s+");
 
+        String[] words = input.trim().split("\\s+");
         if (words.length != 2) {
-            throw new IllegalArgumentException("Input string should have 2 words: file name and sequence");
+            throw new IllegalArgumentException(
+                    "Input string should have 2 words: file name and sequence");
         }
         return words;
     }
