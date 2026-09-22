@@ -33,6 +33,10 @@ public class Box<T extends Fruit> {
     }
 
     public void transferToAnotherBox(Box<? super T> box) {
+        Objects.requireNonNull(box, "box must not be null");
+        if (box == this) {
+            throw new IllegalArgumentException("Box cannot be the same object");
+        }
         box.fruits.addAll(this.fruits);
         Collections.sort(box.fruits);
         this.fruits.clear();
