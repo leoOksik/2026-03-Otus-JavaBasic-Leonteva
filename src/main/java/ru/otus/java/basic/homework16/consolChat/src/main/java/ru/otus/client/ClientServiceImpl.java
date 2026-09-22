@@ -13,6 +13,7 @@ public class ClientServiceImpl implements ClientService {
 
     private final String host;
     private final int port;
+    private volatile boolean running = true;
 
     public ClientServiceImpl(String host, int port) {
         this.host = host;
@@ -25,18 +26,18 @@ public class ClientServiceImpl implements ClientService {
              DataInputStream in = new DataInputStream(socket.getInputStream());
              DataOutputStream out = new DataOutputStream(socket.getOutputStream())) {
 
-            Thread reader = Thread.ofVirtual().start(() -> readMessage(in));
+            Thread.ofVirtual().start(() -> readMessage(in));
 
             while (true) {
                 String message = input.nextLine();
                 out.writeUTF(message);
                 if ("/exit".equalsIgnoreCase(message)) {
+                    running = false;
                     break;
                 }
             }
-            reader.interrupt();
         } catch (IOException ex) {
-            System.out.println("Connection closed");
+            log.info("Connection closed");
         }
     }
 
@@ -46,7 +47,9 @@ public class ClientServiceImpl implements ClientService {
                 System.out.println(in.readUTF());
             }
         } catch (IOException ex) {
-            System.out.println("Disconnected from server. Press Enter to exit.");
+            if (running) {
+                log.info("Disconnected from server. Press Enter to exit.");
+            }
         }
     }
 }

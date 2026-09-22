@@ -140,17 +140,18 @@ public class ClientHandler implements Runnable {
         try {
             client.send("%s: %s".formatted(session.getName(), text));
         } catch (IOException ex) {
-            log.error("Send error: {}", ex.getMessage());
+            log.error("Failed to deliver private message to {}: {}", name, ex.getMessage());
             sendMessage("Message not delivered");
         }
     }
 
     private void kickUser(String name) {
-        ClientSession client = sessionRegistry.remove(name);
+        ClientSession client = sessionRegistry.get(name);
         if (client == null) {
             sendMessage("User %s not found".formatted(name));
             return;
         }
+        sessionRegistry.remove(name, client);
         try {
             client.disconnect();
         } catch (IOException ex) {
@@ -183,7 +184,7 @@ public class ClientHandler implements Runnable {
 
     private void closeSession() {
         if (session != null) {
-            sessionRegistry.remove(session.getName());
+            sessionRegistry.remove(session.getName(), session);
         }
         try {
             socket.close();

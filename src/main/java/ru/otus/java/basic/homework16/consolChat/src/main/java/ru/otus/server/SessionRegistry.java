@@ -9,7 +9,7 @@ public interface SessionRegistry {
 
     ClientSession get(String name);
 
-    ClientSession remove(String name);
+    boolean remove(String name, ClientSession session);
 
     List<ClientSession> getSessions();
 }

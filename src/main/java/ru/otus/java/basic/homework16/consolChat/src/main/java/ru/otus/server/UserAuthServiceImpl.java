@@ -36,14 +36,20 @@ public class UserAuthServiceImpl implements UserAuthService {
     }
 
     @Override
-    public void addAdmin(String name, String login, String password) {
+    public synchronized void addAdmin(String name, String login, String password) {
+        if (isLoginExist(login)) {
+            throw new InvalidDataException("Login already exists");
+        }
+        if (isUserNameExists(name)) {
+            throw new InvalidDataException("Username already exists");
+        }
         User admin = User.builder()
                 .name(name)
                 .login(login)
                 .password(password)
                 .role(UserRole.ADMIN)
                 .build();
-        clients.putIfAbsent(login, admin);
+        clients.put(login, admin);
     }
 
     private boolean isUserNameExists(String name) {

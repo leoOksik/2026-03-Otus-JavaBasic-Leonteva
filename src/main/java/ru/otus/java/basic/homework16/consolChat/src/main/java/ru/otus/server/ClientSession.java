@@ -20,7 +20,7 @@ public class ClientSession {
     @Getter(AccessLevel.NONE)
     private final Socket socket;
 
-    public void send(String message) throws IOException {
+    public synchronized void send(String message) throws IOException {
         out.writeUTF(message);
     }
 

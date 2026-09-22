@@ -38,7 +38,10 @@ public class SessionRegistryImpl implements SessionRegistry {
     }
 
     @Override
-    public ClientSession remove(String name) {
-        return name == null ? null : sessions.remove(name);
+    public boolean remove(String name, ClientSession session) {
+        if (name == null || session == null) {
+            return false;
+        }
+        return sessions.remove(name, session);
     }
 }
