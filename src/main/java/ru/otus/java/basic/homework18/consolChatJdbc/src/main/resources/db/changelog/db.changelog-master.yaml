@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: tag-0.0
+      author: oksana
+      context: init
+      comment: "Tag for empty database"
+      changes:
+        - tagDatabase:
+            tag: v0.0
+
+  - changeSet:
+      id: 1.0-init-create-schema-table
+      author: oksana
+      changes:
+        - sqlFile:
+            path: v1_0/1.0-init-create-schema-table.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: tag-1.0
+      author: oksana
+      changes:
+        - tagDatabase:
+            tag: v1.0
+
+  - changeSet:
+      id: 1.1-init-table-role
+      author: oksana
+      changes:
+        - sqlFile:
+            path: v1_1/1.1-init-table-role.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: tag-1.1
+      author: oksana
+      changes:
+        - tagDatabase:
+            tag: v1.1
+
+  - changeSet:
+      id: 1.2-init-admin
+      author: oksana
+      changes:
+        - sqlFile:
+            path: v1_2/1.2-init-admin.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: tag-1.2
+      author: oksana
+      changes:
+        - tagDatabase:
+            tag: v1.2
