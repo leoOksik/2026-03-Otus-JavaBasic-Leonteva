@@ -9,6 +9,7 @@ import ru.otus.exception.UserNotFoundException;
 import ru.otus.exception.WrongPasswordException;
 import ru.otus.server.database.entity.User;
 import ru.otus.server.database.entity.UserRole;
+import ru.otus.server.database.security.PasswordHasher;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,13 +20,6 @@ import java.util.UUID;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private static final String IS_ADMIN_SQL = """
-        SELECT 1
-        FROM chat.users u
-        JOIN chat.users_roles ur ON ur.user_id = u.id
-        JOIN chat.roles r        ON r.id = ur.role_id
-        WHERE u.email = ? AND r.name = ?
-        """;
 
     private static final String INSERT_USER_SQL = """
         INSERT INTO chat.users (name, email, password)
@@ -38,30 +32,21 @@ public class UserServiceImpl implements UserService {
         SELECT ?, r.id FROM chat.roles r WHERE r.name = ?
         """;
 
-    private static final String FIND_BY_EMAIL_SQL = "SELECT name, password FROM chat.users WHERE email = ?";
+    private static final String FIND_BY_EMAIL_SQL = """
+        SELECT u.name, u.password, r.name AS role
+        FROM chat.users u
+        LEFT JOIN chat.users_roles ur ON ur.user_id = u.id
+        LEFT JOIN chat.roles r        ON r.id = ur.role_id
+        WHERE u.email = ?
+        """;
 
     private final DbConnection db;
 
-    public UserServiceImpl(DbConnection db) {
-        this.db = db;
-    }
+    private final PasswordHasher passwordHasher;
 
-    @Override
-    public boolean isAdmin(String email) {
-        if (StringUtils.isBlank(email)) {
-            throw new IllegalArgumentException("email is blank");
-        }
-        try (Connection conn = db.getConnection();
-             PreparedStatement ps = conn.prepareStatement(IS_ADMIN_SQL)) {
-            ps.setString(1, email);
-            ps.setString(2, UserRole.ADMIN.name());
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
-            }
-        } catch (SQLException e) {
-            log.error("Failed check role admin {}", email, e);
-            throw new IllegalStateException("Error check role admin", e);
-        }
+    public UserServiceImpl(DbConnection db, PasswordHasher passwordHasher) {
+        this.db = db;
+        this.passwordHasher = passwordHasher;
     }
 
     @Override
@@ -76,13 +61,16 @@ public class UserServiceImpl implements UserService {
                 if (!rs.next()) {
                     throw new UserNotFoundException("User not found");
                 }
-                if (!password.equals(rs.getString("password"))) {
+
+                String storedHash = rs.getString("password");
+                if (!passwordHasher.matches(password, storedHash)) {
                     throw new WrongPasswordException("wrong password");
                 }
+
                 return User.builder()
                         .name(rs.getString("name"))
                         .login(email)
-                        .role(isAdmin(email) ? UserRole.ADMIN : UserRole.USER)
+                        .role(UserRole.valueOf(rs.getString("role")))
                         .build();
             }
         } catch (SQLException ex) {
@@ -98,7 +86,10 @@ public class UserServiceImpl implements UserService {
         }
         try (Connection conn = db.getConnection()) {
             conn.setAutoCommit(false);
-            UUID userId = save(conn, name, email, password);
+
+            String encoded = passwordHasher.encode(password);
+            UUID userId = save(conn, name, email, encoded);
+
             if (userId == null) {
                 throw new UserAlreadyExistsException("Name or email already exists");
             }
@@ -115,11 +106,11 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private UUID save(Connection conn, String name, String email, String password) throws SQLException {
+    private UUID save(Connection conn, String name, String email, String hashPassword) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement(INSERT_USER_SQL)) {
             ps.setString(1, name);
             ps.setString(2, email);
-            ps.setString(3, password);
+            ps.setString(3, hashPassword);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next() ? rs.getObject("id", UUID.class) : null;
             }
@@ -127,7 +118,7 @@ public class UserServiceImpl implements UserService {
             if (PSQLState.UNIQUE_VIOLATION.getState().equals(e.getSQLState())) {
                 return null;
             }
-            throw new IllegalStateException("Save user error");
+            throw new IllegalStateException("Save user error", e);
         }
     }
 

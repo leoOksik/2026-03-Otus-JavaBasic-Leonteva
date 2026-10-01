@@ -17,6 +17,7 @@
         <password4j.version>1.8.4</password4j.version>
         <liquibase.version>4.33.0</liquibase.version>
         <hikaricp.version>7.1.0</hikaricp.version>
+        <bcrypt.version>0.10.2</bcrypt.version>
     </properties>
 
     <dependencies>
@@ -55,6 +56,11 @@
             <groupId>com.password4j</groupId>
             <artifactId>password4j</artifactId>
             <version>${password4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>at.favre.lib</groupId>
+            <artifactId>bcrypt</artifactId>
+            <version>${bcrypt.version}</version>
         </dependency>
     </dependencies>
 </project>

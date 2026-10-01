@@ -8,6 +8,8 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.extern.slf4j.Slf4j;
 import ru.otus.server.database.config.DataSourceConfig;
 import ru.otus.server.database.DbConnection;
+import ru.otus.server.database.security.BCryptPasswordHasher;
+import ru.otus.server.database.security.PasswordHasher;
 import ru.otus.server.database.service.UserServiceImpl;
 
 import java.io.IOException;
@@ -25,6 +27,7 @@ public class ServerServiceImpl implements ServerService {
     private final AuthProvider authProvider;
     private final SessionRegistry sessionRegistry;
     private final DbConnection db;
+    PasswordHasher passwordHasher;
 
     public ServerServiceImpl(int port) {
         this.port = port;
@@ -32,7 +35,8 @@ public class ServerServiceImpl implements ServerService {
         this.sessionRegistry = new SessionRegistryImpl();
         this.db = new DbConnection(DataSourceConfig.createDataSource());
         migrate();
-        this.authProvider = new AuthProviderImpl(new UserServiceImpl(db));
+        this.passwordHasher = new BCryptPasswordHasher();
+        this.authProvider = new AuthProviderImpl(new UserServiceImpl(db, passwordHasher));
     }
 
     @Override
